@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Integration</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to CSS file -->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ChatGPT Integration</h1>
+        </header>
+        <div id="chat"></div>
+        <div class="input-container">
+            <input type="text" id="input" placeholder="Type a message..." />
+            <button id="send">Send</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const chat = document.getElementById('chat');
+        const input = document.getElementById('input');
+        const sendButton = document.getElementById('send');
+
+        sendButton.addEventListener('click', () => {
+            const msg = input.value;
+            if (msg.trim() !== '') {
+                appendMessage('You: ' + msg, 'user');
+                socket.emit('message', msg);
+                input.value = '';
+            }
+        });
+
+        socket.on('response', (msg) => {
+            appendMessage('R J GPT: ' + msg, 'chatgpt');
+        });
+
+        function appendMessage(msg, type) {
+            chat.innerHTML += `<div class="${type}">${msg}</div>`;
+            chat.scrollTop = chat.scrollHeight; // Scroll to the bottom
+        }
+    </script>
+</body>
+</html>
